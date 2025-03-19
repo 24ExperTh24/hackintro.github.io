@@ -1,0 +1,22 @@
+Homework 0
+
+Επίθεση buffer overflow…με shellcode
+1.	Χρησιμοποιώ τον debugger «gdb» για να αναλύσω το πρόγραμμα «ncompress_real» με την εντολή: «gdb ncompress_real».
+2.	Στη συνέχεια, κάνω disass τη συνάρτηση main με την εντολή: «disass main», ώστε να δω τις εντολές της συνάρτησης σε assembly. 
+3.	Από το αρχείο «compress42.c», παρατήρησα ότι στη συνάρτηση comprexx καλείται η strcpy που είναι ευάλωτη σε buffer overflow. Κάνω disass τη συνάρτηση με την εντολή «disass comprexx».
+4.	Χρησιμοποιώ την εντολή «x/20wx $esp» για να δούμε τα πρώτα 20 words στη στοίβα (stack).
+5.	Από την ανάλυση της στοίβας, παρατηρώ ότι το EBP βρίσκεται στη διεύθυνση 0xffffd618. Η διεύθυνση επιστροφής (return address) αποθηκεύεται 4 bytes μετά το EBP, δηλαδή στη διεύθυνση 0xffffd61c. 
+6.	Με την εντολή «info registers», βλέπω την τρέχουσα κατάσταση των καταχωρητών, και ελέγχω το ESP, με την εντολή: «x/x $esp» -> 0xffffd6f0: 0x00000001
+7.	Με την εντολή «info proc mappings», βλέπω ότι η στοίβα βρίσκεται μεταξύ των διευθύνσεων 0xfffdd000 και 0xffffe000, που σημαίνει ότι η return address βρίσκεται σε αυτό το range.    
+8.	Προκειμένου να σταματήσω την εκτέλεση του προγράμματος, βάζω breakpoint στη main με την εντολή b main.
+9.	Με την εντολή «nano exploit.py» ανοίγω editor για να γράψω το payload.
+10.	Τέλος, εκτελώ την εντολή «python3 exploit.py > /tmp/payload».
+ 
+
+Devsecops – Pipeline
+1.	Το παρακάτω GitHub Actions workflow: https://github.com/24ExperTh24/devsecops---pipeline/actions/runs/13885635502  σκανάρει το Docker image: Debian: bullseye για ευπάθειες χρησιμοποιώντας την Docker Scout (ένα εργαλείο για ανίχνευση CVEs - Common Vulnerabilities and Exposures).
+2.	Το workflow ενεργοποιείται όταν υπάρχει push στο main branch. Αυτό σημαίνει ότι το pipeline θα τρέχει μετά από κάθε αλλαγή που κάνω στο βασικό branch του repository (main).
+3.	Συνδέομαι στο Docker Hub, καθώς το pipeline συνδέεται στο Docker Hub χρησιμοποιώντας αποθηκευμένα credentials για να αποκτήσει πρόσβαση στα Docker images. Τα στοιχεία username και password ανακτώνται από τα GitHub Secrets που έχω ορίσει για τον λογαριασμό μου στο Docker Hub (UserIDDockerHub και PassWordDockerHub).
+4.	Χρησιμοποιείται το docker/scout-action για την ανίχνευση ευπαθειών.
+5.	Η παράμετρος command: cves ζητά από το Docker Scout να αναγνωρίσει γνωστές ευπάθειες CVEs που σχετίζονται με το συγκεκριμένο image. 
+6.	Όταν ολοκληρωθεί το workflow, το GitHub Actions εμφανίζει τα αποτελέσματα της σάρωσης για ευπάθειες στο Docker image.
